@@ -404,12 +404,9 @@ function manejarInteraccionHue(event) {
 /* Manejadores de eventos de los canvas */
 
 function onSVMouseDown(event) {
-	event.preventDefault();
 	manejarInteraccionSV(event);
 	document.addEventListener('mousemove', onSVMouseMove);
 	document.addEventListener('mouseup', onSVMouseUp);
-	svCanvas.addEventListener('touchmove', onSVTouchMove, { passive: false });
-	svCanvas.addEventListener('touchend', onSVTouchUp);
 }
 
 function onSVMouseMove(event) { manejarInteraccionSV(event); }
@@ -419,20 +416,26 @@ function onSVMouseUp() {
 	document.removeEventListener('mouseup', onSVMouseUp);
 }
 
+function onSVTouchStart(event) {
+	event.preventDefault();
+	manejarInteraccionSV(event);
+	svCanvas.addEventListener('touchmove', onSVTouchMove, { passive: false });
+	svCanvas.addEventListener('touchend', onSVTouchUp);
+	svCanvas.addEventListener('touchcancel', onSVTouchUp);
+}
+
 function onSVTouchMove(event) { event.preventDefault(); manejarInteraccionSV(event); }
 
 function onSVTouchUp() {
 	svCanvas.removeEventListener('touchmove', onSVTouchMove);
 	svCanvas.removeEventListener('touchend', onSVTouchUp);
+	svCanvas.removeEventListener('touchcancel', onSVTouchUp);
 }
 
 function onHueMouseDown(event) {
-	event.preventDefault();
 	manejarInteraccionHue(event);
 	document.addEventListener('mousemove', onHueMouseMove);
 	document.addEventListener('mouseup', onHueMouseUp);
-	hueCanvas.addEventListener('touchmove', onHueTouchMove, { passive: false });
-	hueCanvas.addEventListener('touchend', onHueTouchUp);
 }
 
 function onHueMouseMove(event) { manejarInteraccionHue(event); }
@@ -442,11 +445,20 @@ function onHueMouseUp() {
 	document.removeEventListener('mouseup', onHueMouseUp);
 }
 
+function onHueTouchStart(event) {
+	event.preventDefault();
+	manejarInteraccionHue(event);
+	hueCanvas.addEventListener('touchmove', onHueTouchMove, { passive: false });
+	hueCanvas.addEventListener('touchend', onHueTouchUp);
+	hueCanvas.addEventListener('touchcancel', onHueTouchUp);
+}
+
 function onHueTouchMove(event) { event.preventDefault(); manejarInteraccionHue(event); }
 
 function onHueTouchUp() {
 	hueCanvas.removeEventListener('touchmove', onHueTouchMove);
 	hueCanvas.removeEventListener('touchend', onHueTouchUp);
+	hueCanvas.removeEventListener('touchcancel', onHueTouchUp);
 }
 
 /**
@@ -553,11 +565,11 @@ function copiarHexAlPortapapeles() {
 function asignarEventos() {
 	/* Eventos del canvas SV */
 	svCanvas.addEventListener('mousedown', onSVMouseDown);
-	svCanvas.addEventListener('touchstart', onSVMouseDown, { passive: false });
+	svCanvas.addEventListener('touchstart', onSVTouchStart, { passive: false });
 
 	/* Eventos del canvas de matiz */
 	hueCanvas.addEventListener('mousedown', onHueMouseDown);
-	hueCanvas.addEventListener('touchstart', onHueMouseDown, { passive: false });
+	hueCanvas.addEventListener('touchstart', onHueTouchStart, { passive: false });
 
 	/* Eventos de los sliders RGB */
 	redSlider.addEventListener('input', onSliderChange);

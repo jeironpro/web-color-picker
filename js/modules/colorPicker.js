@@ -174,6 +174,8 @@ function dibujarCanvasSV() {
  */
 function actualizarDesdeHSV(newH, newS, newV) {
 	if (isUpdating) return;
+	if (!isFinite(newH) || !isFinite(newS) || !isFinite(newV)) return;
+
 	isUpdating = true;
 
 	hue = newH;
@@ -193,6 +195,7 @@ function actualizarDesdeHSV(newH, newS, newV) {
  */
 function actualizarDesdeRGB(r, g, b) {
 	if (isUpdating) return;
+	if (!isFinite(r) || !isFinite(g) || !isFinite(b)) return;
 	isUpdating = true;
 
 	const { h: newH, s: newS, v: newV } = rgbToHsv(r, g, b);
@@ -347,6 +350,8 @@ function parsearFormato(formato, texto) {
  */
 function obtenerPosicionCanvas(canvas, clientX, clientY) {
 	const rect = canvas.getBoundingClientRect();
+	if (rect.width === 0 || rect.height === 0) return { x: 0, y: 0 };
+
 	const scaleX = canvas.width / rect.width;
 	const scaleY = canvas.height / rect.height;
 
@@ -366,6 +371,8 @@ function manejarInteraccionSV(event) {
 	if (clientX === undefined) return;
 
 	const { x, y } = obtenerPosicionCanvas(svCanvas, clientX, clientY);
+	if (svCanvas.width === 0 || svCanvas.height === 0) return;
+
 	const newS = (x / svCanvas.width) * 100;
 	const newV = (1 - y / svCanvas.height) * 100;
 
@@ -382,15 +389,16 @@ function manejarInteraccionHue(event) {
 	if (clientX === undefined) return;
 
 	const { x } = obtenerPosicionCanvas(hueCanvas, clientX, clientY);
+	if (hueCanvas.width === 0) return;
+
 	const newH = (x / hueCanvas.width) * 360;
 
 	if (Math.round(newH) !== Math.round(hue)) {
 		hue = newH;
 		dibujarCanvasSV();
 		dibujarCanvasHue();
+		actualizarDesdeHSV(hue, saturation, value);
 	}
-
-	actualizarDesdeHSV(hue, saturation, value);
 }
 
 /* Manejadores de eventos de los canvas */
@@ -460,9 +468,7 @@ function ciclarFormato() {
 	formatoActual = formatos[indiceFormato];
 	formatLabel.textContent = formatoActual.toUpperCase();
 
-	const r = parseInt(redSlider.value, 10);
-	const g = parseInt(greenSlider.value, 10);
-	const b = parseInt(blueSlider.value, 10);
+	const { r, g, b } = hsvToRgb(hue, saturation, value);
 	formatInput.value = obtenerValorFormateado(formatoActual, r, g, b);
 	formatInput.placeholder = obtenerPlaceholder(formatoActual);
 }
@@ -559,7 +565,10 @@ function asignarEventos() {
 	blueSlider.addEventListener('input', onSliderChange);
 
 	/* Click en el label de formato para ciclar */
-	formatLabel.addEventListener('click', ciclarFormato);
+	formatLabel.addEventListener('pointerdown', (e) => {
+		e.preventDefault();
+		ciclarFormato();
+	});
 	formatLabel.addEventListener('keydown', (e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();

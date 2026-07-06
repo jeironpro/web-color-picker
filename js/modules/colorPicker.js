@@ -408,8 +408,8 @@ function onSVMouseDown(event) {
 	manejarInteraccionSV(event);
 	document.addEventListener('mousemove', onSVMouseMove);
 	document.addEventListener('mouseup', onSVMouseUp);
-	document.addEventListener('touchmove', onSVTouchMove, { passive: false });
-	document.addEventListener('touchend', onSVTouchUp);
+	svCanvas.addEventListener('touchmove', onSVTouchMove, { passive: false });
+	svCanvas.addEventListener('touchend', onSVTouchUp);
 }
 
 function onSVMouseMove(event) { manejarInteraccionSV(event); }
@@ -422,8 +422,8 @@ function onSVMouseUp() {
 function onSVTouchMove(event) { event.preventDefault(); manejarInteraccionSV(event); }
 
 function onSVTouchUp() {
-	document.removeEventListener('touchmove', onSVTouchMove);
-	document.removeEventListener('touchend', onSVTouchUp);
+	svCanvas.removeEventListener('touchmove', onSVTouchMove);
+	svCanvas.removeEventListener('touchend', onSVTouchUp);
 }
 
 function onHueMouseDown(event) {
@@ -431,8 +431,8 @@ function onHueMouseDown(event) {
 	manejarInteraccionHue(event);
 	document.addEventListener('mousemove', onHueMouseMove);
 	document.addEventListener('mouseup', onHueMouseUp);
-	document.addEventListener('touchmove', onHueTouchMove, { passive: false });
-	document.addEventListener('touchend', onHueTouchUp);
+	hueCanvas.addEventListener('touchmove', onHueTouchMove, { passive: false });
+	hueCanvas.addEventListener('touchend', onHueTouchUp);
 }
 
 function onHueMouseMove(event) { manejarInteraccionHue(event); }
@@ -445,8 +445,8 @@ function onHueMouseUp() {
 function onHueTouchMove(event) { event.preventDefault(); manejarInteraccionHue(event); }
 
 function onHueTouchUp() {
-	document.removeEventListener('touchmove', onHueTouchMove);
-	document.removeEventListener('touchend', onHueTouchUp);
+	hueCanvas.removeEventListener('touchmove', onHueTouchMove);
+	hueCanvas.removeEventListener('touchend', onHueTouchUp);
 }
 
 /**
